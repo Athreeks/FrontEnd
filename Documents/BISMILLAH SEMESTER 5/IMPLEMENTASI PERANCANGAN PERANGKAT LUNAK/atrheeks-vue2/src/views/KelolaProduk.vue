@@ -384,13 +384,14 @@ html, body {
 /* 🌼 List Produk */
 .produk-list {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 30px; /* jarak antar card sedikit dikurangi */
-  justify-items: center;
-  padding: 0 60px; /* tambahkan padding kanan-kiri agar tidak mepet */
-  max-width: 1400px; /* batasi lebar maksimum */
-  margin: 0 auto; /* posisikan di tengah layar */
+  grid-template-columns: repeat(auto-fit, minmax(240px, auto));
+  gap: 30px;
+  justify-content: start;
+  padding: 0 60px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
+
 .produk-card {
   background: #fff0f6;
   border-radius: 20px;
