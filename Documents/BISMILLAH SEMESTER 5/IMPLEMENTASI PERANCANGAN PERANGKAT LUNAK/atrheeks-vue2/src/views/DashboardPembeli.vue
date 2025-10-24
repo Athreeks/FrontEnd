@@ -17,7 +17,18 @@
 
             <!-- Jika ada item -->
             <div v-else>
-              <div v-for="(item, index) in cartItems" :key="index" class="cart-item">
+              <div
+                v-for="(item, index) in cartItems"
+                :key="index"
+                class="cart-item"
+              >
+                <!-- Checklist -->
+                <input
+                  type="checkbox"
+                  v-model="item.selected"
+                  class="cart-checkbox"
+                />
+
                 <img :src="item.image" :alt="item.name" />
                 <div class="cart-info">
                   <p class="cart-name">{{ item.name }}</p>
@@ -25,12 +36,17 @@
                   <p class="cart-qty">Jumlah: {{ item.quantity }}</p>
 
                   <!-- Tambahan Warna hanya untuk gelang dan bagcharm -->
-                  <div v-if="item.name === 'Gelang' || item.name === 'Bagcharm'" class="cart-color">
+                  <div
+                    v-if="item.name === 'Gelang' || item.name === 'Bagcharm'"
+                    class="cart-color"
+                  >
                     <span>Warna:</span>
-                    <div class="color-box" :style="{ backgroundColor: item.color }"></div>
+                    <div
+                      class="color-box"
+                      :style="{ backgroundColor: item.color }"
+                    ></div>
                     <span class="color-name">{{ item.colorName }}</span>
                   </div>
-
 
                   <p class="cart-subtotal">
                     Subtotal: Rp {{ formatHarga(item.price * item.quantity) }}
@@ -40,9 +56,15 @@
 
               <hr />
               <div class="cart-total">
-                <p><strong>Total:</strong> Rp {{ formatHarga(totalHarga) }}</p>
+                <p><strong>Total (Dipilih):</strong> Rp {{ formatHarga(totalDipilih) }}</p>
               </div>
-              <button class="proses-btn" @click="prosesPesanan">Proses Pesanan</button>
+              <button
+                class="proses-btn"
+                :disabled="totalDipilih === 0"
+                @click="prosesPesanan"
+              >
+                Proses Pesanan
+              </button>
             </div>
           </div>
         </div>
@@ -82,7 +104,7 @@
           <h3>SALAD JELLY</h3>
           <p>Potongan jelly yang sangat imut dengan berbagai rasa dan diatasnya ada saus mayonais manis.</p>
         </div>
-        
+
         <div class="produk-card" @click="goToDetail('bagcharm')">
           <img src="@/assets/Bagcharm.jpg" alt="BagCharm" />
           <h3>BAGCHARM</h3>
@@ -114,29 +136,34 @@ export default {
           price: 15000,
           quantity: 2,
           image: require("@/assets/SaladBuah.jpg"),
+          selected: false,
         },
         {
           name: "Gelang",
           price: 25000,
           quantity: 1,
-          color: "#9575cd", // ungu lembut
+          color: "#9575cd",
           colorName: "Ungu Lembut",
           image: require("@/assets/Gelang.jpg"),
+          selected: false,
         },
         {
           name: "Bagcharm",
           price: 30000,
           quantity: 1,
-          color: "#f8bbd0", // pink pastel
+          color: "#f8bbd0",
           colorName: "Pink Pastel",
           image: require("@/assets/Bagcharm.jpg"),
+          selected: false,
         },
       ],
     };
   },
   computed: {
-    totalHarga() {
-      return this.cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    totalDipilih() {
+      return this.cartItems
+        .filter((item) => item.selected)
+        .reduce((acc, item) => acc + item.price * item.quantity, 0);
     },
   },
   methods: {
@@ -155,9 +182,20 @@ export default {
       this.$router.push(`/rincian-produk/${namaProduk}`);
     },
     prosesPesanan() {
+      const dipilih = this.cartItems.filter((item) => item.selected);
+      if (dipilih.length === 0) {
+        Swal.fire({
+          title: "Belum ada yang dipilih 🛒",
+          text: "Silakan pilih produk yang ingin kamu proses!",
+          icon: "warning",
+          confirmButtonColor: "#ec407a",
+        });
+        return;
+      }
+
       Swal.fire({
         title: "Proses Pesanan 🛍️",
-        text: "Apakah kamu yakin ingin memproses pesanan ini?",
+        text: `Kamu akan memproses ${dipilih.length} item.`,
         icon: "question",
         showCancelButton: true,
         confirmButtonText: "Ya, proses!",
@@ -175,7 +213,8 @@ export default {
             timer: 2000,
           });
           setTimeout(() => {
-            this.cartItems = [];
+            // hanya hapus item yang dipilih
+            this.cartItems = this.cartItems.filter((item) => !item.selected);
             this.$router.push("/proses-pesanan");
           }, 2000);
         }
@@ -210,7 +249,6 @@ export default {
   },
 };
 </script>
-
 
 <style scoped>
 .dashboard-pembeli {
@@ -373,6 +411,14 @@ export default {
 }
 
 /* Cart isi */
+/* Tambahan gaya untuk checkbox di keranjang */
+.cart-checkbox {
+  margin-right: 8px;
+  cursor: pointer;
+  accent-color: #ec407a; /* warna pink khas Athreeks */
+}
+
+
 .cart-item {
   display: flex;
   gap: 10px;
