@@ -25,23 +25,23 @@
           </div>
 
           <div class="input-group">
-            <label for="email">Gmail</label>
-            <input
-              type="email"
-              id="email"
-              v-model="email"
-              placeholder="Masukkan alamat Gmail"
-              required
-            />
-          </div>
-
-          <div class="input-group">
             <label for="username">Username</label>
             <input
               type="text"
               id="username"
               v-model="username"
               placeholder="Masukkan username"
+              required
+            />
+          </div>
+          
+          <div class="input-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              v-model="email"
+              placeholder="Masukkan alamat email"
               required
             />
           </div>

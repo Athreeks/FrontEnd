@@ -319,7 +319,20 @@ label {
 }
 
 input,
-select,
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 2px solid #f8bbd0;
+  background: #fff0f5;
+  color: #880e4f;
+  font-family: inherit;
+  transition: 0.3s;
+  height: 45px;
+  box-sizing: border-box;
+}
+
+/* Textarea disesuaikan */
 textarea {
   width: 100%;
   padding: 12px 14px;
@@ -329,7 +342,12 @@ textarea {
   color: #880e4f;
   font-family: inherit;
   transition: 0.3s;
+  height: 60px; /* samakan tinggi */
+  resize: none; /* biar nggak bisa ditarik */
+  box-sizing: border-box;
+  
 }
+
 
 input:focus,
 select:focus,

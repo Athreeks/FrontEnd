@@ -25,7 +25,6 @@
           <div class="produk-info">
             <h2>{{ item.nama }}</h2>
             <p><strong>Harga:</strong> Rp{{ item.harga.toLocaleString() }}</p>
-            <p><strong>Stok:</strong> {{ item.stok }}</p>
             <p><strong>Deskripsi:</strong> {{ item.deskripsi }}</p>
           </div>
 
@@ -50,28 +49,24 @@ export default {
         {
           nama: "Salad Buah 🍓",
           harga: 25000,
-          stok: 30,
           deskripsi: "Salad buah segar dengan campuran yogurt manis dan keju parut.",
           gambar: require("@/assets/SaladBuah.jpg"),
         },
         {
           nama: "Salad Jelly 🍇",
           harga: 20000,
-          stok: 25,
           deskripsi: "Campuran jelly warna-warni dan buah segar dalam satu cup manis.",
           gambar: require("@/assets/SaladJelly.jpg"),
         },
         {
           nama: "Bagcharm 🎀",
           harga: 15000,
-          stok: 40,
           deskripsi: "Aneka accessories lucu dan stylish untuk melengkapi gayamu!",
           gambar: require("@/assets/Bagcharm.jpg"),
         },
         {
           nama: "Gelang 🧸",
           harga: 15000,
-          stok: 40,
           deskripsi: "Aneka accessories lucu dan stylish untuk melengkapi gayamu!",
           gambar: require("@/assets/Gelang.jpg"),
         },
@@ -96,22 +91,18 @@ export default {
             <input id="nama" class="swal2-input" placeholder="Nama Produk" style="flex:2;height:30px;">
           </div>
 
-          <div style="display:flex;align-items:center;gap:10px;">
-            <label style="flex:1;font-weight:bold;color:#c2185b;">Harga</label>
-            <input id="harga" type="number" class="swal2-input" placeholder="Harga (Rp)" style="flex:2;height:30px;">
-          </div>
-
-          <div style="display:flex;align-items:center;gap:10px;">
-            <label style="flex:1;font-weight:bold;color:#c2185b;">Stok</label>
-            <input id="stok" type="number" class="swal2-input" placeholder="Jumlah Stok" style="flex:2;height:30px;">
-          </div>
-
-          <div style="display:flex;align-items:flex-start;gap:10px;">
+           <div style="display:flex;align-items:flex-start;gap:10px;">
             <label style="flex:1;font-weight:bold;color:#c2185b;">Deskripsi</label>
             <textarea id="deskripsi" class="swal2-textarea" placeholder="Deskripsi Produk" 
               style="flex:2;height:120px;resize:none;"></textarea>
           </div>
 
+          <div style="display:flex;align-items:center;gap:10px;">
+            <label style="flex:1;font-weight:bold;color:#c2185b;">Harga</label>
+            <input id="harga" type="number" class="swal2-input" placeholder="Harga (Rp)" style="flex:2;height:30px;">
+          </div>
+
+         
           <div style="display:flex;align-items:center;gap:10px;">
             <label style="flex:1;font-weight:bold;color:#c2185b;">Gambar</label>
             <input id="gambar" type="file" accept="image/*" class="swal2-file" style="flex:2;">
@@ -128,12 +119,11 @@ export default {
       preConfirm: () => {
         const nama = document.getElementById("nama").value.trim();
         const harga = Number(document.getElementById("harga").value);
-        const stok = Number(document.getElementById("stok").value);
         const deskripsi = document.getElementById("deskripsi").value.trim();
         const file = document.getElementById("gambar").files[0];
 
         return new Promise((resolve) => {
-          if (!nama || !harga || !stok || !deskripsi || !file) {
+          if (!nama || !harga || !deskripsi || !file) {
             Swal.showValidationMessage("Semua kolom wajib diisi 🌷");
             return;
           }
@@ -142,7 +132,6 @@ export default {
             resolve({
               nama,
               harga,
-              stok,
               deskripsi,
               gambar: e.target.result,
             });
@@ -182,20 +171,16 @@ export default {
             <input id="nama" class="swal2-input" value="${produk.nama}" style="flex:2;height:30px;">
           </div>
 
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <label style="flex:1;font-weight:bold;color:#c2185b;">Deskripsi</label>
+            <textarea id="deskripsi" class="swal2-textarea" style="flex:2;height:120px;resize:none;">${produk.deskripsi}</textarea>
+          </div>
+
           <div style="display:flex;align-items:center;gap:10px;">
             <label style="flex:1;font-weight:bold;color:#c2185b;">Harga</label>
             <input id="harga" type="number" class="swal2-input" value="${produk.harga}" style="flex:2;height:30px;">
           </div>
 
-          <div style="display:flex;align-items:center;gap:10px;">
-            <label style="flex:1;font-weight:bold;color:#c2185b;">Stok</label>
-            <input id="stok" type="number" class="swal2-input" value="${produk.stok}" style="flex:2;height:30px;">
-          </div>
-
-          <div style="display:flex;align-items:flex-start;gap:10px;">
-            <label style="flex:1;font-weight:bold;color:#c2185b;">Deskripsi</label>
-            <textarea id="deskripsi" class="swal2-textarea" style="flex:2;height:120px;resize:none;">${produk.deskripsi}</textarea>
-          </div>
 
           <div style="display:flex;align-items:center;gap:10px;">
             <label style="flex:1;font-weight:bold;color:#c2185b;">Gambar (opsional)</label>
@@ -213,12 +198,11 @@ export default {
       preConfirm: () => {
         const nama = document.getElementById("nama").value.trim();
         const harga = Number(document.getElementById("harga").value);
-        const stok = Number(document.getElementById("stok").value);
         const deskripsi = document.getElementById("deskripsi").value.trim();
         const file = document.getElementById("gambar").files[0];
 
         return new Promise((resolve) => {
-          if (!nama || !harga || !stok || !deskripsi) {
+          if (!nama || !harga || !deskripsi) {
             Swal.showValidationMessage("Semua kolom wajib diisi 🌷");
             return;
           }
@@ -229,14 +213,13 @@ export default {
                 ...produk,
                 nama,
                 harga,
-                stok,
                 deskripsi,
                 gambar: e.target.result,
               });
             };
             reader.readAsDataURL(file);
           } else {
-            resolve({ ...produk, nama, harga, stok, deskripsi });
+            resolve({ ...produk, nama, harga, deskripsi });
           }
         });
       },

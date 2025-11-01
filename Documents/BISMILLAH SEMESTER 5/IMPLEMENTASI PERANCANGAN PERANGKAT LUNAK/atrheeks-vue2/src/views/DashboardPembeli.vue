@@ -707,7 +707,4 @@ export default {
 .hapus-btn {
   animation: fadeSlideIn 0.4s ease;
 }
-
-
-
 </style>
