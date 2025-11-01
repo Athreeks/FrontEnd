@@ -33,7 +33,13 @@
                 <div class="cart-info">
                   <p class="cart-name">{{ item.name }}</p>
                   <p class="cart-price">Rp {{ formatHarga(item.price) }} / pcs</p>
-                  <p class="cart-qty">Jumlah: {{ item.quantity }}</p>
+
+                  <!-- 🔢 Tombol tambah/kurang jumlah -->
+                  <div class="qty-control">
+                    <button class="qty-btn" @click="kurangiJumlah(index)" :disabled="item.quantity <= 1">-</button>
+                    <span class="qty-number">{{ item.quantity }}</span>
+                    <button class="qty-btn" @click="tambahJumlah(index)">+</button>
+                  </div>
 
                   <!-- Tambahan Warna hanya untuk gelang dan bagcharm -->
                   <div
@@ -51,6 +57,11 @@
                   <p class="cart-subtotal">
                     Subtotal: Rp {{ formatHarga(item.price * item.quantity) }}
                   </p>
+
+                  <!-- 🗑️ Tombol hapus produk -->
+                  <button class="hapus-btn" @click="hapusProduk(index)">
+                    <i class="fas fa-trash"></i> Hapus
+                  </button>
                 </div>
               </div>
 
@@ -181,6 +192,39 @@ export default {
     goToDetail(namaProduk) {
       this.$router.push(`/rincian-produk/${namaProduk}`);
     },
+    tambahJumlah(index) {
+      this.cartItems[index].quantity++;
+    },
+    kurangiJumlah(index) {
+      if (this.cartItems[index].quantity > 1) {
+        this.cartItems[index].quantity--;
+      }
+    },
+    hapusProduk(index) {
+      Swal.fire({
+        title: "Hapus Produk?",
+        text: `Kamu yakin ingin menghapus ${this.cartItems[index].name} dari keranjang?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ec407a",
+        cancelButtonColor: "#f48fb1",
+        confirmButtonText: "Ya, hapus",
+        cancelButtonText: "Batal",
+        background: "#fff0f5",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.cartItems.splice(index, 1);
+          Swal.fire({
+            title: "Terhapus!",
+            text: "Produk telah dihapus dari keranjang.",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false,
+            background: "#fff0f5",
+          });
+        }
+      });
+    },
     prosesPesanan() {
       const dipilih = this.cartItems.filter((item) => item.selected);
       if (dipilih.length === 0) {
@@ -213,7 +257,6 @@ export default {
             timer: 2000,
           });
           setTimeout(() => {
-            // hanya hapus item yang dipilih
             this.cartItems = this.cartItems.filter((item) => !item.selected);
             this.$router.push("/proses-pesanan");
           }, 2000);
@@ -251,6 +294,7 @@ export default {
 </script>
 
 <style scoped>
+
 .dashboard-pembeli {
   background: #f8bbd0;
   min-height: 100vh;
@@ -586,4 +630,84 @@ export default {
   font-weight: 600;
   color: #ad1457;
 }
+
+.qty-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+}
+.qty-btn {
+  background-color: #ec407a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+}
+.qty-btn:hover {
+  background-color: #d81b60;
+}
+.qty-number {
+  font-weight: bold;
+  color: #6a1b9a;
+  width: 24px;
+  text-align: center;
+}
+.hapus-btn {
+  background: #fce4ec;
+  border: 1px solid #ec407a;
+  color: #ec407a;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 4px 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(236, 64, 122, 0.2);
+}
+
+.hapus-btn i {
+  color: #ec407a;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.hapus-btn:hover {
+  background: #ec407a;
+  color: white;
+  border-color: #ec407a;
+  box-shadow: 0 4px 10px rgba(236, 64, 122, 0.4);
+  transform: translateY(-1px);
+}
+
+.hapus-btn:hover i {
+  color: white;
+  transform: rotate(-15deg);
+}
+
+/* ✨ Animasi lembut saat tombol muncul */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hapus-btn {
+  animation: fadeSlideIn 0.4s ease;
+}
+
+
+
 </style>
