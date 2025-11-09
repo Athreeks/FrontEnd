@@ -103,30 +103,12 @@
     <!-- Etalase -->
     <section class="etalase">
       <h1>ETALASE</h1>
-      <div class="produk-list">
-        <div class="produk-card" @click="goToDetail('salad-buah')">
-          <img src="@/assets/SaladBuah.jpg" alt="Salad Buah" />
-          <h3>SALAD BUAH</h3>
-          <p>Beragam potongan buah yang dilumuri dengan saus mayonais yang manis.</p>
-        </div>
-
-        <div class="produk-card" @click="goToDetail('salad-jelly')">
-          <img src="@/assets/SaladJelly.jpg" alt="Salad Jelly" />
-          <h3>SALAD JELLY</h3>
-          <p>Potongan jelly yang sangat imut dengan berbagai rasa dan diatasnya ada saus mayonais manis.</p>
-        </div>
-
-        <div class="produk-card" @click="goToDetail('bagcharm')">
-          <img src="@/assets/Bagcharm.jpg" alt="BagCharm" />
-          <h3>BAGCHARM</h3>
-          <p>Berbagai accessories seperti bagcharm dan gelang yang lucu.</p>
-        </div>
-
-        <div class="produk-card" @click="goToDetail('gelang')">
-          <img src="@/assets/Gelang.jpg" alt="Gelang" />
-          <h3>GELANG</h3>
-          <p>Berbagai accessories seperti bagcharm dan gelang yang lucu.</p>
-        </div>
+      <div class="produk-card" v-for="produk in produkList" :key="produk.id">
+        <img :src="produk.image" :alt="produk.name" />
+        <h3>{{ produk.name }}</h3>
+        <p>{{ produk.description }}</p>
+        <p>Harga: Rp {{ formatHarga(produk.price) }}</p>
+        <button class="proses-btn" @click="tambahKeKeranjang(produk)">Tambah ke Keranjang</button>
       </div>
     </section>
   </div>
@@ -134,6 +116,7 @@
 
 <script>
 import Swal from "sweetalert2";
+import api from "@/api"; // 💖 kita pakai file api.js
 
 export default {
   name: "DashboardPembeli",
@@ -141,33 +124,8 @@ export default {
     return {
       dropdownOpen: false,
       cartOpen: false,
-      cartItems: [
-        {
-          name: "Salad Buah",
-          price: 15000,
-          quantity: 2,
-          image: require("@/assets/SaladBuah.jpg"),
-          selected: false,
-        },
-        {
-          name: "Gelang",
-          price: 25000,
-          quantity: 1,
-          color: "#9575cd",
-          colorName: "Ungu Lembut",
-          image: require("@/assets/Gelang.jpg"),
-          selected: false,
-        },
-        {
-          name: "Bagcharm",
-          price: 30000,
-          quantity: 1,
-          color: "#f8bbd0",
-          colorName: "Pink Pastel",
-          image: require("@/assets/Bagcharm.jpg"),
-          selected: false,
-        },
-      ],
+      produkList: [], // daftar produk dari backend
+      cartItems: [],  // keranjang
     };
   },
   computed: {
@@ -177,7 +135,21 @@ export default {
         .reduce((acc, item) => acc + item.price * item.quantity, 0);
     },
   },
+  mounted() {
+    this.getProduk(); // 💕 ambil produk saat halaman dibuka
+  },
   methods: {
+    // --- 🔹 Ambil produk dari backend
+    async getProduk() {
+      try {
+        const res = await api.get("/produk");
+        this.produkList = res.data;
+      } catch (err) {
+        console.error("Gagal memuat produk:", err);
+        Swal.fire("Gagal!", "Tidak bisa mengambil data produk.", "error");
+      }
+    },
+
     toggleDropdown() {
       this.dropdownOpen = !this.dropdownOpen;
       this.cartOpen = false;
@@ -189,9 +161,28 @@ export default {
     formatHarga(angka) {
       return angka.toLocaleString("id-ID");
     },
-    goToDetail(namaProduk) {
-      this.$router.push(`/rincian-produk/${namaProduk}`);
+
+    // --- 🛒 Tambah produk ke keranjang
+    tambahKeKeranjang(produk) {
+      const existing = this.cartItems.find((i) => i.id === produk.id);
+      if (existing) {
+        existing.quantity++;
+      } else {
+        this.cartItems.push({
+          ...produk,
+          quantity: 1,
+          selected: false,
+        });
+      }
+      Swal.fire({
+        icon: "success",
+        title: "Ditambahkan!",
+        text: `${produk.name} masuk ke keranjang 💕`,
+        timer: 1500,
+        showConfirmButton: false,
+      });
     },
+
     tambahJumlah(index) {
       this.cartItems[index].quantity++;
     },
@@ -200,6 +191,7 @@ export default {
         this.cartItems[index].quantity--;
       }
     },
+
     hapusProduk(index) {
       Swal.fire({
         title: "Hapus Produk?",
@@ -215,8 +207,8 @@ export default {
         if (result.isConfirmed) {
           this.cartItems.splice(index, 1);
           Swal.fire({
-            title: "Terhapus!",
-            text: "Produk telah dihapus dari keranjang.",
+            title: "Terhapus! 💔",
+            text: "Produk dihapus dari keranjang.",
             icon: "success",
             timer: 1500,
             showConfirmButton: false,
@@ -225,6 +217,7 @@ export default {
         }
       });
     },
+
     prosesPesanan() {
       const dipilih = this.cartItems.filter((item) => item.selected);
       if (dipilih.length === 0) {
@@ -263,6 +256,7 @@ export default {
         }
       });
     },
+
     logout() {
       Swal.fire({
         title: "Yakin ingin logout? 🌸",
@@ -292,6 +286,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 
